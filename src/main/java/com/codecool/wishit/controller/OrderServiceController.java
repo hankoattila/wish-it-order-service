@@ -3,7 +3,13 @@ package com.codecool.wishit.controller;
 import com.codecool.wishit.model.LineItem;
 import com.codecool.wishit.model.Product;
 import com.codecool.wishit.model.ProductOrder;
+import com.codecool.wishit.model.User;
 import com.codecool.wishit.service.OrderService;
+import com.codecool.wishit.utilities.JSONParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.sampled.Line;
@@ -34,6 +40,16 @@ public class OrderServiceController {
         return orderService.getOrders(userId);
     }
 
+    @PostMapping("/api/add-to-cart")
+    public void addToCart(@RequestBody String json){
+        Product product = JSONParser.parsToObject(json,"product",Product.class);
+        System.out.println(product.getType());
+        System.out.println(product.isReserved());
+        LineItem lineItem = new LineItem(1, "Fight Club Soap", "soap.jpg", 100.0f, "USD");
+
+        orderService.addToCart(1L,lineItem);
+    }
+
     @PostMapping("/api/checkout-the-cart")
     public void closeCart(){
         String message =  orderService.closeCart(1L);
@@ -46,12 +62,6 @@ public class OrderServiceController {
         System.out.println(message);
     }
 
-
-    @PostMapping("/api/add-to-cart")
-    public void addToCart(){
-        LineItem lineItem = new LineItem(1, "Fight Club Soap", "soap.jpg", 100.0f, "USD");
-        orderService.addToCart(1L,lineItem);
-    }
 
     @PostMapping("/api/remove-from-cart")
     public void removeFromCart(){
