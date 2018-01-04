@@ -15,4 +15,12 @@ public class JSONParser {
         JsonElement originJson = jsonObject.get(key);
         return gson.fromJson(originJson, classOfT);
     }
+
+    public static String getDataByKey(String json, String key) {
+        // RECEIVE JSON AND CONVERT IT TO ADDRESS
+        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        Gson gson = new Gson();
+        JsonElement originJson = jsonObject.get(key);
+        return originJson.toString();
+    }
 }

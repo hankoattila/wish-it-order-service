@@ -41,38 +41,45 @@ public class OrderServiceController {
     }
 
     @PostMapping("/api/add-to-cart")
-    public void addToCart(@RequestBody String json) {
+    public String addToCart(@RequestBody String json) {
         Product product = JSONParser.parsToObject(json, "product", Product.class);
-        User user = JSONParser.parsToObject(json, "user", User.class);
+        String user_id = JSONParser.getDataByKey(json, "user_id");
         LineItem lineItem = new LineItem(product.getId(),
                 product.getName(),
                 product.getImageFileName(),
                 product.getDefaultPrice(),
                 product.getDefaultCurrency());
-        orderService.addToCart(user.getUserId(), lineItem);
+        try{
+
+            orderService.addToCart(Long.parseLong(user_id), lineItem);
+        } catch (Exception e){
+            return "invalid_params";
+        }
+        return "new_item";
+
     }
 
     @PostMapping("/api/checkout-the-cart")
     public void closeCart(@RequestBody String json) {
-        User user = JSONParser.parsToObject(json, "user", User.class);
-        String message = orderService.closeCart(user.getUserId());
-        System.out.println(message);
+        String user_id = JSONParser.getDataByKey(json, "user_id");
+        String message = orderService.closeCart(Long.parseLong(user_id));
+
     }
 
     @PostMapping("/api/paid-the-cart")
     public void paidCatt(@RequestBody String json) {
-        User user = JSONParser.parsToObject(json, "user", User.class);
-        String message = orderService.paidCart(user.getUserId());
-        System.out.println(message);
+        String user_id = JSONParser.getDataByKey(json, "user_id");
+        String message = orderService.paidCart(Long.parseLong(user_id));
+
     }
 
 
     @PostMapping("/api/remove-from-cart")
     public void removeFromCart(@RequestBody String json) {
         Product product = JSONParser.parsToObject(json, "product", Product.class);
-        User user = JSONParser.parsToObject(json, "user", User.class);
-        String message =  orderService.removeFromCart(user.getUserId(), (long) product.getId());
-        System.out.println(message);
+        String user_id = JSONParser.getDataByKey(json, "user_id");
+        String message =  orderService.removeFromCart(Long.parseLong(user_id), (long) product.getId());
+
     }
 
 }
