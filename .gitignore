@@ -28,3 +28,4 @@ nbdist/
 /avatar-service/avatar-service.iml
 /ticatactoe-ai-service/ticatactoe-ai-service.iml
 /wish-it-order-service.iml
+/src/main/resources/application.properties
