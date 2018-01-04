@@ -13,15 +13,20 @@ public class ProductOrder {
     private Long id;
     private Long userId;
     private float totalPrice;
+    private Status status;
 
-    @OneToMany(mappedBy = "productOrder")
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "productOrder", orphanRemoval = true)
     private List<LineItem> lineItemList = new ArrayList<>();
+
 
     public ProductOrder() {
     }
 
+    public ProductOrder(Long userId) {
+        this.userId = userId;
+    }
+
     public ProductOrder(List<LineItem> lineItems, float totalPrice) {
-        this.id = 1L;
         this.userId = 1L;
         this.status = Status.NEW;
         this.lineItemList = lineItems;
@@ -67,8 +72,6 @@ public class ProductOrder {
     public void setStatus(Status status) {
         this.status = status;
     }
-
-    private Status status;
 
 
 }

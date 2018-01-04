@@ -38,8 +38,8 @@ public class LineItem {
         this.id = id;
     }
 
-    public ProductOrder getProductOrder() {
-        return productOrder;
+    public String getProductOrder() {
+        return productOrder.getId().toString();
     }
 
     public void setProductOrder(ProductOrder productOrder) {
