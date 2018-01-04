@@ -13,24 +13,22 @@ public class ProductOrder {
     private Long id;
     private Long userId;
     private float totalPrice;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "productOrder", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productOrder", orphanRemoval = true)
     private List<LineItem> lineItemList = new ArrayList<>();
 
 
     public ProductOrder() {
     }
 
-    public ProductOrder(Long userId) {
+    public ProductOrder(Long userId, LineItem lineItem) {
         this.userId = userId;
-    }
-
-    public ProductOrder(List<LineItem> lineItems, float totalPrice) {
-        this.userId = 1L;
         this.status = Status.NEW;
-        this.lineItemList = lineItems;
-        this.totalPrice = totalPrice;
+        this.lineItemList.add(lineItem);
+        lineItem.setProductOrder(this);
+        this.totalPrice = 500f;
     }
 
     public Long getId() {

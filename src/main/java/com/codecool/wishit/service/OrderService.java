@@ -7,10 +7,6 @@ import com.codecool.wishit.model.Status;
 import com.codecool.wishit.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class OrderService {
     OrderRepository orderRepository;
@@ -23,14 +19,16 @@ public class OrderService {
         return orderRepository.findByUserIdAndStatus(userId, Status.NEW);
     }
 
-    public void addToCart(Long userId, LineItem lineItem) throws IOException {
+    public void addToCart(Long userId, LineItem lineItem) {
         ProductOrder productOrder = getOrders(userId);
-        if (productOrder == null){
-            productOrder = new ProductOrder(userId);
+        if (productOrder == null) {
+            productOrder = new ProductOrder(userId, lineItem);
+            orderRepository.saveAndFlush(productOrder);
+
             return;
         }
-        for (LineItem lineItemInOrder:productOrder.getLineItemList()){
-            if (lineItem.getProductId() == lineItemInOrder.getProductId()){
+        for (LineItem lineItemInOrder : productOrder.getLineItemList()) {
+            if (lineItem.getProductId() == lineItemInOrder.getProductId()) {
                 return;
             }
         }
@@ -40,13 +38,4 @@ public class OrderService {
 
     }
 
-    public void initOrder(Long userId) {
-        List<LineItem> lineItems = new ArrayList<>();
-        LineItem lineItem = new LineItem(1, "Light Saber", "lightsaber.jpg", 5000.0f, "USD");
-        lineItems.add(lineItem);
-        ProductOrder order = new ProductOrder(lineItems, 555.0f);
-        order.setStatus(Status.NEW);
-        lineItem.setProductOrder(order);
-        orderRepository.saveAndFlush(order);
-    }
 }

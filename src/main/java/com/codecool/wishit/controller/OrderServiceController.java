@@ -17,10 +17,6 @@ public class OrderServiceController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/init")
-    public void init(){
-        orderService.initOrder(1L);
-    }
 
     @GetMapping("/order/{userId}")
     public ProductOrder get(@PathVariable("userId") Long userId) {
@@ -28,7 +24,7 @@ public class OrderServiceController {
     }
 
     @PostMapping("/order")
-    public void post() throws IOException {
+    public void post(){
         LineItem lineItem = new LineItem(1, "Fight Club Soap", "soap.jpg", 100.0f, "USD");
         orderService.addToCart(1L,lineItem);
     }
