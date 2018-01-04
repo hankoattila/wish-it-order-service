@@ -39,12 +39,12 @@ public class OrderService {
 
             return;
         }
-        for (LineItem lineItemInOrder : productOrder.getLineItemList()) {
+        for (LineItem lineItemInOrder : productOrder.getItems()) {
             if (lineItem.getProductId() == lineItemInOrder.getProductId()) {
                 return;
             }
         }
-        productOrder.getLineItemList().add(lineItem);
+        productOrder.getItems().add(lineItem);
         lineItem.setProductOrder(productOrder);
         orderRepository.saveAndFlush(productOrder);
 
@@ -73,10 +73,9 @@ public class OrderService {
     public String removeFromCart(Long userId,Long productId) {
         ProductOrder productOrder = getProductOrder(userId,Status.NEW);
         if (productOrder != null){
-            for (LineItem lineItemInOrder : productOrder.getLineItemList()) {
-                System.out.println(lineItemInOrder.getProductId() + " ---- " + productId);
+            for (LineItem lineItemInOrder : productOrder.getItems()) {
                 if (productId == lineItemInOrder.getProductId()) {
-                    productOrder.getLineItemList().remove(lineItemInOrder);
+                    productOrder.getItems().remove(lineItemInOrder);
                     orderRepository.saveAndFlush(productOrder);
                     return "Remove Done";
                 }

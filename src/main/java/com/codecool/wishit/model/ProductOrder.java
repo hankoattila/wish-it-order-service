@@ -2,6 +2,7 @@ package com.codecool.wishit.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,9 +16,8 @@ public class ProductOrder {
     private float totalPrice;
     @Enumerated(EnumType.STRING)
     private Status status;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productOrder", orphanRemoval = true)
-    private List<LineItem> lineItemList = new ArrayList<>();
+    private List<LineItem> items = new ArrayList<>();
 
 
     public ProductOrder() {
@@ -26,7 +26,7 @@ public class ProductOrder {
     public ProductOrder(Long userId, LineItem lineItem,Status status) {
         this.userId = userId;
         this.status = status;
-        this.lineItemList.add(lineItem);
+        this.items.add(lineItem);
         lineItem.setProductOrder(this);
         this.totalPrice = 500f;
     }
@@ -55,14 +55,6 @@ public class ProductOrder {
         this.totalPrice = totalPrice;
     }
 
-    public List<LineItem> getLineItemList() {
-        return lineItemList;
-    }
-
-    public void setLineItemList(List<LineItem> lineItemList) {
-        this.lineItemList = lineItemList;
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -71,5 +63,11 @@ public class ProductOrder {
         this.status = status;
     }
 
+    public List<LineItem> getItems() {
+        return items;
+    }
 
+    public void setItems(List<LineItem> items) {
+        this.items = items;
+    }
 }
