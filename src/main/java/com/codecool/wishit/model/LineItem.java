@@ -21,12 +21,12 @@ public class LineItem {
     public LineItem() {
     }
 
-    public LineItem(int productId, String productName, String productImage, float actualPrice, String currency) {
+    public LineItem(int productId, String productName, String productImage, float actualPrice, Currency currency) {
         this.productId = productId;
         this.actualPrice = actualPrice;
         this.productName = productName;
         this.productImage = productImage;
-        this.currency = Currency.getInstance(currency);
+        this.currency = currency;
     }
 
 

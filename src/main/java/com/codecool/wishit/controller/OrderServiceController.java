@@ -1,9 +1,6 @@
 package com.codecool.wishit.controller;
 
-import com.codecool.wishit.model.LineItem;
-import com.codecool.wishit.model.Product;
-import com.codecool.wishit.model.ProductOrder;
-import com.codecool.wishit.model.User;
+import com.codecool.wishit.model.*;
 import com.codecool.wishit.service.OrderService;
 import com.codecool.wishit.utilities.JSONParser;
 import com.google.gson.Gson;
@@ -26,46 +23,56 @@ public class OrderServiceController {
         this.orderService = orderService;
     }
 
-
+    @PostMapping("/")
+    public void getJsonFromGreg(@RequestBody String json) {
+        System.out.println(json);
+    }
 
     @GetMapping("/order/{userId}")
-    public ProductOrder getOpenOrder(@PathVariable("userId") Long userId){
-        return orderService.getProductOrder(userId);
+    public ProductOrder getOpenOrder(@PathVariable("userId") Long userId) {
+        return orderService.getProductOrder(userId, Status.NEW);
     }
 
 
     @GetMapping("/orders/{userId}")
     public List<ProductOrder> getCloseOrders(@PathVariable("userId") Long userId) {
 
-        return orderService.getOrders(userId);
+        return orderService.getOrders(userId,Status.PAID);
     }
 
     @PostMapping("/api/add-to-cart")
-    public void addToCart(@RequestBody String json){
-        Product product = JSONParser.parsToObject(json,"product",Product.class);
-        System.out.println(product.getType());
-        System.out.println(product.isReserved());
-        LineItem lineItem = new LineItem(1, "Fight Club Soap", "soap.jpg", 100.0f, "USD");
-
-        orderService.addToCart(1L,lineItem);
+    public void addToCart(@RequestBody String json) {
+        Product product = JSONParser.parsToObject(json, "product", Product.class);
+        User user = JSONParser.parsToObject(json, "user", User.class);
+        LineItem lineItem = new LineItem(product.getId(),
+                product.getName(),
+                product.getImageFileName(),
+                product.getDefaultPrice(),
+                product.getDefaultCurrency());
+        orderService.addToCart(user.getUserId(), lineItem);
     }
 
     @PostMapping("/api/checkout-the-cart")
-    public void closeCart(){
-        String message =  orderService.closeCart(1L);
+    public void closeCart(@RequestBody String json) {
+        User user = JSONParser.parsToObject(json, "user", User.class);
+        String message = orderService.closeCart(user.getUserId());
         System.out.println(message);
     }
 
     @PostMapping("/api/paid-the-cart")
-    public void paidCatt(){
-        String message =  orderService.paidCart(1L);
+    public void paidCatt(@RequestBody String json) {
+        User user = JSONParser.parsToObject(json, "user", User.class);
+        String message = orderService.paidCart(user.getUserId());
         System.out.println(message);
     }
 
 
     @PostMapping("/api/remove-from-cart")
-    public void removeFromCart(){
-
+    public void removeFromCart(@RequestBody String json) {
+        Product product = JSONParser.parsToObject(json, "product", Product.class);
+        User user = JSONParser.parsToObject(json, "user", User.class);
+        String message =  orderService.removeFromCart(user.getUserId(), (long) product.getId());
+        System.out.println(message);
     }
 
 }

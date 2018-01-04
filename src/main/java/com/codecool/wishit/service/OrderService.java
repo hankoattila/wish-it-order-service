@@ -19,19 +19,20 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public ProductOrder getProductOrder(Long userId) {
-        return orderRepository.findByUserIdAndStatus(userId, Status.NEW);
+    public ProductOrder getProductOrder(Long userId,Status status) {
+        return orderRepository.findByUserIdAndStatus(userId, status);
     }
 
-    public List<ProductOrder> getOrders(Long userId) {
-        LineItem lineItem = new LineItem(2, "Cheese Soap", "cheese.jpg", 200.0f, "HUF");
-        ProductOrder productOrder = new ProductOrder(userId, lineItem, Status.PAID);
-        orderRepository.saveAndFlush(productOrder);
-        return orderRepository.findProductOrderByUserIdAndStatus(userId, Status.PAID);
+    public List<ProductOrder> getOrders(Long userId,Status status) {
+        return orderRepository.findProductOrderByUserIdAndStatus(userId, status);
+    }
+
+    public ProductOrder getProductOrderByUserId(Long userId){
+        return orderRepository.findByUserId(userId);
     }
 
     public void addToCart(Long userId, LineItem lineItem) {
-        ProductOrder productOrder = getProductOrder(userId);
+        ProductOrder productOrder = getProductOrder(userId,Status.NEW);
         if (productOrder == null) {
             productOrder = new ProductOrder(userId, lineItem, Status.NEW);
             orderRepository.saveAndFlush(productOrder);
@@ -50,9 +51,10 @@ public class OrderService {
     }
 
     public String closeCart(Long userId) {
-        ProductOrder productOrder = getProductOrder(userId);
+        ProductOrder productOrder = getProductOrder(userId,Status.NEW);
         if (productOrder != null){
             productOrder.setStatus(Status.CHECKEDOUT);
+            orderRepository.saveAndFlush(productOrder);
             return "Done";
         }
         return "No Order";
@@ -60,10 +62,25 @@ public class OrderService {
     }
 
     public String paidCart(Long userId) {
-        ProductOrder productOrder = getProductOrder(userId);
+        ProductOrder productOrder = getProductOrder(userId,Status.CHECKEDOUT);
         if (productOrder != null){
             productOrder.setStatus(Status.PAID);
             return "Done";
+        }
+        return "No Order";
+    }
+
+    public String removeFromCart(Long userId,Long productId) {
+        ProductOrder productOrder = getProductOrder(userId,Status.NEW);
+        if (productOrder != null){
+            for (LineItem lineItemInOrder : productOrder.getLineItemList()) {
+                System.out.println(lineItemInOrder.getProductId() + " ---- " + productId);
+                if (productId == lineItemInOrder.getProductId()) {
+                    productOrder.getLineItemList().remove(lineItemInOrder);
+                    orderRepository.saveAndFlush(productOrder);
+                    return "Remove Done";
+                }
+            }
         }
         return "No Order";
     }
