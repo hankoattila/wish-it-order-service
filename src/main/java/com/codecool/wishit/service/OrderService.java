@@ -2,10 +2,13 @@ package com.codecool.wishit.service;
 
 
 import com.codecool.wishit.model.LineItem;
+import com.codecool.wishit.model.Product;
 import com.codecool.wishit.model.ProductOrder;
 import com.codecool.wishit.model.Status;
 import com.codecool.wishit.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -15,12 +18,16 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public ProductOrder getOrders(Long userId) {
+    public ProductOrder getProductOrder(Long userId) {
         return orderRepository.findByUserIdAndStatus(userId, Status.NEW);
     }
 
+    public List<ProductOrder> getOrders(Long userId) {
+        return orderRepository.findProductOrderByUserIdAndStatus(userId,Status.PAID);
+    }
+
     public void addToCart(Long userId, LineItem lineItem) {
-        ProductOrder productOrder = getOrders(userId);
+        ProductOrder productOrder = getProductOrder(userId);
         if (productOrder == null) {
             productOrder = new ProductOrder(userId, lineItem);
             orderRepository.saveAndFlush(productOrder);
@@ -37,5 +44,4 @@ public class OrderService {
         orderRepository.saveAndFlush(productOrder);
 
     }
-
 }
