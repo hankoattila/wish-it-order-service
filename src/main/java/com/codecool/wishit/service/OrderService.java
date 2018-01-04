@@ -6,6 +6,7 @@ import com.codecool.wishit.model.Product;
 import com.codecool.wishit.model.ProductOrder;
 import com.codecool.wishit.model.Status;
 import com.codecool.wishit.repository.OrderRepository;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,13 +24,16 @@ public class OrderService {
     }
 
     public List<ProductOrder> getOrders(Long userId) {
-        return orderRepository.findProductOrderByUserIdAndStatus(userId,Status.PAID);
+        LineItem lineItem = new LineItem(2, "Cheese Soap", "cheese.jpg", 200.0f, "HUF");
+        ProductOrder productOrder = new ProductOrder(userId, lineItem, Status.PAID);
+        orderRepository.saveAndFlush(productOrder);
+        return orderRepository.findProductOrderByUserIdAndStatus(userId, Status.PAID);
     }
 
     public void addToCart(Long userId, LineItem lineItem) {
         ProductOrder productOrder = getProductOrder(userId);
         if (productOrder == null) {
-            productOrder = new ProductOrder(userId, lineItem);
+            productOrder = new ProductOrder(userId, lineItem, Status.NEW);
             orderRepository.saveAndFlush(productOrder);
 
             return;
@@ -43,5 +47,24 @@ public class OrderService {
         lineItem.setProductOrder(productOrder);
         orderRepository.saveAndFlush(productOrder);
 
+    }
+
+    public String closeCart(Long userId) {
+        ProductOrder productOrder = getProductOrder(userId);
+        if (productOrder != null){
+            productOrder.setStatus(Status.CHECKEDOUT);
+            return "Done";
+        }
+        return "No Order";
+
+    }
+
+    public String paidCart(Long userId) {
+        ProductOrder productOrder = getProductOrder(userId);
+        if (productOrder != null){
+            productOrder.setStatus(Status.PAID);
+            return "Done";
+        }
+        return "No Order";
     }
 }

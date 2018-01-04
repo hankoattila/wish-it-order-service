@@ -6,6 +6,7 @@ import com.codecool.wishit.model.ProductOrder;
 import com.codecool.wishit.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.sampled.Line;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,12 +30,22 @@ public class OrderServiceController {
 
     @GetMapping("/orders/{userId}")
     public List<ProductOrder> getCloseOrders(@PathVariable("userId") Long userId) {
-        LineItem lineItem = new LineItem(2, "Cheese Soap", "cheese.jpg", 200.0f, "HUF");
-        ProductOrder productOrder = new ProductOrder(userId, lineItem);
-
 
         return orderService.getOrders(userId);
     }
+
+    @PostMapping("/api/checkout-the-cart")
+    public void closeCart(){
+        String message =  orderService.closeCart(1L);
+        System.out.println(message);
+    }
+
+    @PostMapping("/api/paid-the-cart")
+    public void paidCatt(){
+        String message =  orderService.paidCart(1L);
+        System.out.println(message);
+    }
+
 
     @PostMapping("/api/add-to-cart")
     public void addToCart(){

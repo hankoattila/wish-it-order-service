@@ -23,9 +23,9 @@ public class ProductOrder {
     public ProductOrder() {
     }
 
-    public ProductOrder(Long userId, LineItem lineItem) {
+    public ProductOrder(Long userId, LineItem lineItem,Status status) {
         this.userId = userId;
-        this.status = Status.NEW;
+        this.status = status;
         this.lineItemList.add(lineItem);
         lineItem.setProductOrder(this);
         this.totalPrice = 500f;
