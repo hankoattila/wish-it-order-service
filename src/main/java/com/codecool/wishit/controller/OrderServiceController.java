@@ -1,16 +1,13 @@
 package com.codecool.wishit.controller;
 
-import com.codecool.wishit.model.*;
+import com.codecool.wishit.model.LineItem;
+import com.codecool.wishit.model.Product;
+import com.codecool.wishit.model.ProductOrder;
+import com.codecool.wishit.model.Status;
 import com.codecool.wishit.service.OrderService;
 import com.codecool.wishit.utilities.JSONParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.sampled.Line;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -37,7 +34,7 @@ public class OrderServiceController {
     @GetMapping("/orders/{userId}")
     public List<ProductOrder> getCloseOrders(@PathVariable("userId") Long userId) {
 
-        return orderService.getOrders(userId,Status.PAID);
+        return orderService.getOrders(userId, Status.PAID);
     }
 
     @PostMapping("/api/add-to-cart")
@@ -49,10 +46,10 @@ public class OrderServiceController {
                 product.getImageFileName(),
                 product.getDefaultPrice(),
                 product.getDefaultCurrency());
-        try{
+        try {
 
             orderService.addToCart(Long.parseLong(user_id), lineItem);
-        } catch (Exception e){
+        } catch (Exception e) {
             return "invalid_params";
         }
         return "new_item";
@@ -75,10 +72,10 @@ public class OrderServiceController {
 
 
     @PostMapping("/api/remove-from-cart")
-    public void removeFromCart(@RequestBody String json) {
+    public ProductOrder removeFromCart(@RequestBody String json) {
         Product product = JSONParser.parsToObject(json, "product", Product.class);
         String user_id = JSONParser.getDataByKey(json, "user_id");
-        String message =  orderService.removeFromCart(Long.parseLong(user_id), (long) product.getId());
+        return orderService.removeFromCart(Long.parseLong(user_id), (long) product.getId());
 
     }
 

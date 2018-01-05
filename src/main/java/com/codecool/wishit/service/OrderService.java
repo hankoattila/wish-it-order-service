@@ -70,17 +70,17 @@ public class OrderService {
         return "No Order";
     }
 
-    public String removeFromCart(Long userId,Long productId) {
+    public ProductOrder removeFromCart(Long userId,Long productId) {
         ProductOrder productOrder = getProductOrder(userId,Status.NEW);
         if (productOrder != null){
             for (LineItem lineItemInOrder : productOrder.getItems()) {
                 if (productId == lineItemInOrder.getProductId()) {
                     productOrder.getItems().remove(lineItemInOrder);
                     orderRepository.saveAndFlush(productOrder);
-                    return "Remove Done";
+                    return productOrder;
                 }
             }
         }
-        return "No Order";
+        return productOrder;
     }
 }

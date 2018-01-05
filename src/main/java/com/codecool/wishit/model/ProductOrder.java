@@ -28,7 +28,7 @@ public class ProductOrder {
         this.status = status;
         this.items.add(lineItem);
         lineItem.setProductOrder(this);
-        this.totalPrice = 500f;
+        this.totalPrice = lineItem.getActualPrice();
     }
 
     public Long getId() {
